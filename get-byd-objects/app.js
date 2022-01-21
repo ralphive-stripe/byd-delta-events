@@ -30,10 +30,7 @@ exports.lambdaHandler = async (event, context) => {
         console.log("Config Loaded from DynamoDB")
 
         //Add more objects if needed
-        const getBydObjectsPromises = [ SalesInvoices(data.lastRun.S), 
-                                        Customers(data.lastRun.S),
-                                        SalesOrders(data.lastRun.S),
-                                        ServiceOrders(data.lastRun.S)]
+        const getBydObjectsPromises = [SalesOrders(data.lastRun.S)]
 
         await Promise.all(getBydObjectsPromises)   //Retrieve delta from ByD Objects
             .then(prepareSnsPromises)               //Prepare msgs for publishing
@@ -65,7 +62,7 @@ let getConfig = function () {
             var response = {
                 Item: {
                     lastRun: {
-                        S: '2020-09-13T09:31:06.393Z'
+                        S: '2021-01-12T09:31:06.393Z'
                     },
                     configId: {
                         N: '0'
@@ -83,6 +80,27 @@ let getConfig = function () {
                 console.error("error loading from dynamo" + error)
                 reject(new Error("Error Loading Condiguration! - " + error))
             })
+    })
+}
+
+let SalesOrders = function (lastRun) {
+    // Returns Customers from BYD
+    return new Promise(function (resolve, reject) {
+        console.log("Retrieving ByD Sales Orders")
+        const expand =  "BuyerParty/BuyerPartyName,Item/ItemProduct,Item/ItemScheduleLine"
+        const filter = ` and ReleaseStatusCode eq ${quotes(3)}`
+        getBydObject(lastRun, process.env.BYD_SALESORDERS, process.env.BYD_SALESORDERS_ID,expand,filter).then((data) => {
+            console.log(data.length + " ByD Sales Orders Retrieved")
+            let cleanData = []
+            data.forEach(salesOrder => {
+                if (salesOrder.Item[0].FulfilmentProcessingStatusCode != "3"){//Delivered
+                    console.log(`Sales Order ${salesOrder.ID} not Delivered. Let's process it!`)
+                    cleanData.push(salesOrder)
+                } 
+            })
+            console.log(cleanData.length + " Actual ByD Sales Orders to be delviered")
+            resolve(cleanData)
+        })
     })
 }
 
@@ -111,17 +129,6 @@ let Customers = function (lastRun) {
     })
 }
 
-let SalesOrders = function (lastRun) {
-    // Returns Customers from BYD
-    return new Promise(function (resolve, reject) {
-        console.log("Retrieving ByD Sales Orders")
-        getBydObject(lastRun, process.env.BYD_SALESORDERS, process.env.BYD_SALESORDERS_ID).then((data) => {
-            console.log(data.length + "ByD Sales Orders Retrieved")
-            resolve(data)
-        })
-    })
-}
-
 let ServiceOrders = function (lastRun) {
     // Returns Customers from BYD
     return new Promise(function (resolve, reject) {
@@ -133,15 +140,18 @@ let ServiceOrders = function (lastRun) {
     })
 }
 
-let getBydObject = function (lastRun, endpoint, idAttribute, additionalAttributes) {
+let getBydObject = function (lastRun, endpoint, idAttribute, expand, filter) {
     return new Promise(function (resolve, reject) {
 
         console.log("Preparing request to " + endpoint)
         var params = new URLSearchParams({
             "$format": "json",
-            "$select": idAttribute + ",ObjectID,CreationDateTime,LastChangeDateTime",
-            "$filter": "LastChangeDateTime ge datetimeoffset" + quotes(lastRun)
+            // "$select": idAttribute + ",ObjectID,CreationDateTime,LastChangeDateTime",
+            "$filter": "LastChangeDateTime ge datetimeoffset" + quotes(lastRun) + filter,
+            "$expand":  expand 
         })
+        
+        console.log(params)
 
         const options = {
             method: "GET",
@@ -167,7 +177,7 @@ let getBydObject = function (lastRun, endpoint, idAttribute, additionalAttribute
                 } else {
                     var formatedData = []
                     response.data.d.results.forEach(function (elem) {
-                        element = formatData(elem, idAttribute, additionalAttributes)
+                        element = formatData(elem, idAttribute)
                         if (element) {
                             formatedData.push(element)
                         }
@@ -188,7 +198,7 @@ function quotes(val) {
     return "%27" + val + "%27";
 }
 
-function formatData(elem, idAttribute, additionalAttributes) {
+function formatData(elem, idAttribute) {
     try {
         const updated = elem.CreationDateTime == elem.LastChangeDateTime ? false : true //If dates are the same the item was created
         var element = elem
@@ -247,7 +257,8 @@ let prepareSnsPromises = (bydData) => {
 
 let publishSNSMessage = (SNSMessages) => {
     return new Promise(async (resolve, reject) => {
-        console.log("CALLING PROMISES ALL for " + SNSMessages.length + "Messages")
+        console.log("CALLING PROMISES ALL for " + SNSMessages.length + " Messages")
+        
 
         await Promise.all(SNSMessages).then((retPromises) => {
                 console.log("All messages published!")
