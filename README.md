@@ -1,10 +1,12 @@
-[![REUSE status](https://api.reuse.software/badge/github.com/SAP-samples/byd-delta-events)](https://api.reuse.software/info/github.com/SAP-samples/byd-delta-events)
 [![License: Apache2](https://img.shields.io/badge/License-Apache2-green.svg)](https://opensource.org/licenses/Apache-2.0)
-# A Decoupled Approach for SAP Business ByDesign Event Handling
+# A Stripe <> SAP Business ByDesign using AWS Serverless Application Model
 [![](https://i.imgur.com/ZGPBj6Y.png)]()
 
 ## Description
 This application produces events based on SAP Business ByDesign objects' changes. It works by pulling data, every minute, from OData services and checking if there were changes. It has a serverless, loosely coupled architecture and has been implemented using [AWS Serverless Application Model](https://aws.amazon.com/serverless/sam/).
+
+*TODO*
+Update docs 
 
 ## Requirments
 * AWS Account (free tier will do it)
@@ -15,7 +17,7 @@ This application produces events based on SAP Business ByDesign objects' changes
 ## Deployment
 Clone or download this repository:
 ```bash
-git clone https://github.com/B1SA/byd-delta-events.git
+git clone https://github.com/B1SA/byd-stripe.git
 ```
 Update the environment variables located on the [template.yaml](template.yaml) file. The minimum requirement is the BYD credentials.
 
