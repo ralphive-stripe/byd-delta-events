@@ -1,0 +1,14 @@
+{
+  "name": "stripe-webhook",
+  "version": "1.0.0",
+  "description": "receive webhooks from stripe",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ralphive",
+  "license": "ISC",
+  "dependencies": {
+    "stripe": "^8.197.0"
+  }
+}
