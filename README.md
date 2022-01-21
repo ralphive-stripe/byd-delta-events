@@ -1,6 +1,6 @@
 [![License: Apache2](https://img.shields.io/badge/License-Apache2-green.svg)](https://opensource.org/licenses/Apache-2.0)
 # A Stripe <> SAP Business ByDesign using AWS Serverless Application Model
-[![](https://i.imgur.com/uwpTfCB.png)]()
+[![](https://i.imgur.com/uwpTfCB.png)](https://i.imgur.com/uwpTfCB.png)
 
 ## Description
 This application produces events based on SAP Business ByDesign objects' changes. It works by pulling data, every minute, from OData services and checking if there were changes. It has a serverless, loosely coupled architecture and has been implemented using [AWS Serverless Application Model](https://aws.amazon.com/serverless/sam/).
