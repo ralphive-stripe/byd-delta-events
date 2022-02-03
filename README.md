@@ -14,13 +14,10 @@ This application monitore the release of Sales Orders in SAP Business ByDesign a
 * These [ByD Custom Odata Services](https://github.com/SAP-samples/sapbydesign-api-samples/), [Sales Orders](https://github.com/SAP-samples/sapbydesign-api-samples/blob/master/Custom%20OData%20Services/khsalesorder.xml), [Outbound Delivery Requests](https://github.com/SAP-samples/sapbydesign-api-samples/blob/master/Custom%20OData%20Services/khoutbounddeliveryrequest.xml) and, [Outbound Deliveries](https://github.com/SAP-samples/sapbydesign-api-samples/blob/master/Custom%20OData%20Services/khoutbounddelivery.xml)
 
 ## Deployment
-Clone or download this repository:
-```bash
-git clone https://github.com/B1SA/byd-stripe.git
-```
-Update the environment variables located on the [template.yaml](template.yaml) file. With the Stripe Keys and ByD Credentials.
+* Clone or download this repository:
+* Update the environment variables located on the [template.yaml](template.yaml) file. With the Stripe Keys and ByD Credentials.
 
-From its root folder, build and deploy it to your account.
+* From its root folder, build and deploy it to your account.
 ```bash
 sam build
 sam deploy --guided
