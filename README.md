@@ -1,5 +1,5 @@
 [![License: Apache2](https://img.shields.io/badge/License-Apache2-green.svg)](https://opensource.org/licenses/Apache-2.0)
-# A Stripe x SAP Business ByDesign integration using [AWS SAM](https://aws.amazon.com/serverless/sam/)
+# Stripe x SAP Business ByDesign integration using [AWS SAM](https://aws.amazon.com/serverless/sam/)
 [![](https://i.imgur.com/uwpTfCB.png)](https://i.imgur.com/uwpTfCB.png)
 
 ## Description
